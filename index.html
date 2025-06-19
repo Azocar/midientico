@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Icono de diente para la pestaña del navegador -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Dientico - Gestión Odontológica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Un gris claro para el fondo */
+        }
+        .sidebar {
+            background-color: #1e3a8a; /* Azul oscuro para la barra lateral */
+            color: white;
+        }
+        .nav-item {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer; /* Indica que es clickeable */
+        }
+        .nav-item:hover {
+            background-color: #1c4a8a; /* Un tono un poco más claro al pasar el ratón */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        /* Estilos para el spinner de carga */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+
+    <!-- Sidebar (Barra Lateral) -->
+    <aside class="sidebar w-64 p-6 flex flex-col rounded-r-lg">
+        <div class="text-2xl font-bold mb-8 text-center">Mi Dientico</div>
+        <nav class="flex-grow">
+            <ul>
+                <li class="mb-2">
+                    <a class="nav-item flex items-center space-x-2" onclick="loadContent('dashboard')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a class="nav-item flex items-center space-x-2" onclick="loadContent('patients')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M10 20v-9a1 1 0 011-1h2a1 1 0 011 1v9m-11-2h12a2 2 0 002-2V6a2 2 0 00-2-2H9a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>Pacientes</span>
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a class="nav-item flex items-center space-x-2" onclick="loadContent('appointments')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <span>Citas</span>
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a class="nav-item flex items-center space-x-2" onclick="loadContent('courses')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        <span>Cursos</span>
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a class="nav-item flex items-center space-x-2" onclick="loadContent('reports')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-3-3v6"></path></svg>
+                        <span>Reportes</span>
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a class="nav-item flex items-center space-x-2" onclick="loadContent('users')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 012-2h2a2 2 0 012 2v1m-4 0h4"></path></svg>
+                        <span>Usuarios</span>
+                    </a>
+                </li>
+                <li class="mb-2">
+                    <a class="nav-item flex items-center space-x-2" onclick="loadContent('settings')">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.51-.174 1.109-.174 1.62 0l2.126.696L17 3l4 4-2.317 2.126.696 2.126c.174.51.174 1.109 0 1.62l-.696 2.126L21 17l-4 4-2.126-2.317-.696 2.126c-.174.51-.763.763-1.62 0l-2.126-.696L7 21l-4-4 2.317-2.126-.696-2.126c-.174-.51-.174-1.109 0-1.62l.696-2.126L3 7l4-4 2.126 2.317.696-2.126z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span>Configuración</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="mt-8">
+            <a href="#" class="nav-item flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 p-8">
+        <!-- Header del contenido principal -->
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800" id="main-title">Bienvenido al Sistema Mi Dientico</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-600">Dr. Merito Cepillo</span>
+                <img src="https://placehold.co/40x40/cccccc/ffffff?text=MC" alt="Avatar del usuario" class="w-10 h-10 rounded-full border-2 border-blue-500">
+            </div>
+        </header>
+
+        <!-- Contenedor para el contenido dinámico de las secciones -->
+        <section id="content-container" class="mt-8">
+            <!-- El contenido del dashboard se cargará aquí por defecto -->
+        </section>
+
+        <!-- Footer del contenido principal -->
+        <footer class="mt-8 text-center text-gray-500 text-sm">
+            &copy; 2025 Mi Dientico. Todos los derechos reservados.
+        </footer>
+    </main>
+
+    <script>
+        // Datos de ejemplo para pacientes (simulando una base de datos)
+        const patientsData = [
+            {
+                id: 'P001',
+                name: 'Juan Pérez',
+                cedula: 'V-12345678',
+                phone: '0414-1234567',
+                history: `
+                    **Fecha: 2024-01-15**
+                    Consulta inicial y limpieza dental. Paciente con buena higiene oral, pero con cálculo leve en incisivos inferiores.
+                    **Fecha: 2024-03-20**
+                    Extracción de tercer molar superior derecho (muela del juicio). Procedimiento exitoso sin complicaciones. Se recetó analgésico y antiinflamatorio.
+                    **Fecha: 2024-06-01**
+                    Consulta de seguimiento. La encía en la zona de la extracción ha cicatrizado correctamente. Se realizó un chequeo general y se recomendó el uso de hilo dental diariamente.
+                    **Alergias:** Ninguna conocida.
+                `,
+                allergies: 'Ninguna conocida',
+                appointments: [
+                    { date: '2024-01-15', treatment: 'Limpieza dental' },
+                    { date: '2024-03-20', treatment: 'Extracción de tercer molar (derecho)' },
+                    { date: '2024-06-01', treatment: 'Chequeo general' }
+                ]
+            },
+            {
+                id: 'P002',
+                name: 'María García',
+                cedula: 'V-98765432',
+                phone: '0426-9876543',
+                history: `
+                    **Fecha: 2023-11-10**
+                    Consulta por dolor en molar inferior izquierdo. Diagnóstico: Caries profunda. Se programó para obturación.
+                    **Fecha: 2023-11-15**
+                    Obturación (empaste) en molar inferior izquierdo. Se utilizó resina compuesta.
+                    **Fecha: 2024-02-01**
+                    Chequeo de rutina y aplicación de flúor. Paciente informa sensibilidad leve al frío.
+                    **Alergias:** Alérgica a la penicilina.
+                `,
+                allergies: 'Alérgica a la penicilina',
+                appointments: [
+                    { date: '2023-11-10', treatment: 'Consulta por dolor (diagnóstico de caries)' },
+                    { date: '2023-11-15', treatment: 'Obturación molar inferior izquierdo' },
+                    { date: '2024-02-01', treatment: 'Chequeo y flúor' }
+                ]
+            },
+            {
+                id: 'P003',
+                name: 'Pedro López',
+                cedula: 'V-54321098',
+                phone: '0412-5432109',
+                history: `
+                    **Fecha: 2024-04-05**
+                    Colocación de aparato dental (ortodoncia). Se dieron instrucciones detalladas sobre el cuidado y la higiene.
+                    **Fecha: 2024-05-10**
+                    Ajuste de aparato dental. El paciente reporta buena adaptación.
+                    **Alergias:** Ninguna conocida.
+                `,
+                allergies: 'Ninguna conocida',
+                appointments: [
+                    { date: '2024-04-05', treatment: 'Colocación de ortodoncia' },
+                    { date: '2024-05-10', treatment: 'Ajuste de ortodoncia' }
+                ]
+            }
+        ];
+
+        // Función para cargar contenido dinámicamente
+        function loadContent(sectionId) {
+            const contentContainer = document.getElementById('content-container');
+            const mainTitle = document.getElementById('main-title');
+            contentContainer.innerHTML = ''; // Limpiar contenido anterior
+
+            switch (sectionId) {
+                case 'dashboard':
+                    mainTitle.innerText = 'Bienvenido al Sistema Mi Dientico';
+                    contentContainer.innerHTML = `
+                        <section id="dashboard-content" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Tarjeta de Próximas Citas -->
+                            <div class="card p-6">
+                                <h2 class="text-xl font-semibold mb-4 text-gray-700">Próximas Citas</h2>
+                                <ul class="space-y-3">
+                                    <li class="flex items-center justify-between text-gray-600">
+                                        <span>Paciente: Juan Pérez - Limpieza</span>
+                                        <span class="text-sm text-gray-500">10:00 AM</span>
+                                    </li>
+                                    <li class="flex items-center justify-between text-gray-600">
+                                        <span>Paciente: María García - Caries</span>
+                                        <span class="text-sm text-gray-500">11:30 AM</span>
+                                    </li>
+                                    <li class="flex items-center justify-between text-gray-600">
+                                        <span>Paciente: Pedro López - Chequeo</span>
+                                        <span class="text-sm text-gray-500">02:00 PM</span>
+                                    </li>
+                                </ul>
+                                <button class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Ver todas las citas</button>
+                            </div>
+
+                            <!-- Tarjeta de Tareas Pendientes -->
+                            <div class="card p-6">
+                                <h2 class="text-xl font-semibold mb-4 text-gray-700">Tareas Pendientes</h2>
+                                <ul class="space-y-3">
+                                    <li class="flex items-center space-x-2 text-gray-600">
+                                        <input type="checkbox" class="form-checkbox rounded text-blue-500">
+                                        <span>Revisar historial de nuevo paciente.</span>
+                                    </li>
+                                    <li class="flex items-center space-x-2 text-gray-600">
+                                        <input type="checkbox" class="form-checkbox rounded text-blue-500">
+                                        <span>Preparar materiales para curso de la tarde.</span>
+                                    </li>
+                                    <li class="flex items-center space-x-2 text-gray-600">
+                                        <input type="checkbox" class="form-checkbox rounded text-blue-500">
+                                        <span>Actualizar stock de insumos.</span>
+                                    </li>
+                                </ul>
+                                <button class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Gestionar Tareas</button>
+                            </div>
+
+                            <!-- Tarjeta de Notificaciones Recientes -->
+                            <div class="card p-6">
+                                <h2 class="text-xl font-semibold mb-4 text-gray-700">Notificaciones Recientes</h2>
+                                <ul class="space-y-3">
+                                    <li class="text-gray-600">Nueva cita agendada para mañana.</li>
+                                    <li class="text-gray-600">Pago pendiente del paciente Ana Rodríguez.</li>
+                                    <li class="text-gray-600">Recordatorio: Curso de Ortodoncia inicia en 30 minutos.</li>
+                                </ul>
+                                <button class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Ver Notificaciones</button>
+                            </div>
+                        </section>
+                    `;
+                    break;
+                case 'patients':
+                    mainTitle.innerText = 'Gestión de Pacientes';
+                    let patientsListHtml = `
+                        <div class="card p-6 mb-6">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Lista de Pacientes</h2>
+                            <div class="mb-4">
+                                <input type="text" placeholder="Buscar paciente por nombre o cédula..." class="w-full p-2 border border-gray-300 rounded-md">
+                            </div>
+                            <ul class="space-y-2">
+                    `;
+                    patientsData.forEach(patient => {
+                        patientsListHtml += `
+                            <li class="flex items-center justify-between bg-gray-50 p-3 rounded-md hover:bg-gray-100 cursor-pointer" onclick="showPatientDetails('${patient.id}')">
+                                <span class="font-medium text-gray-800">${patient.name}</span>
+                                <span class="text-sm text-gray-500">${patient.cedula}</span>
+                            </li>
+                        `;
+                    });
+                    patientsListHtml += `
+                            </ul>
+                        </div>
+                        <div id="patient-details-card" class="card p-6" style="display: none;">
+                            <!-- Los detalles del paciente se cargarán aquí -->
+                        </div>
+                    `;
+                    contentContainer.innerHTML = patientsListHtml;
+                    break;
+                case 'appointments':
+                    mainTitle.innerText = 'Gestión de Citas';
+                    contentContainer.innerHTML = `
+                        <div class="card p-6">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Agendar Nueva Cita</h2>
+                            <form class="space-y-4">
+                                <div>
+                                    <label for="cedula" class="block text-sm font-medium text-gray-700">Cédula del Paciente:</label>
+                                    <input type="text" id="cedula" name="cedula" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre del Paciente:</label>
+                                    <input type="text" id="nombre" name="nombre" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label for="celular" class="block text-sm font-medium text-gray-700">Celular:</label>
+                                    <input type="text" id="celular" name="celular" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label for="razon_visita" class="block text-sm font-medium text-gray-700">Razón de la Visita:</label>
+                                    <textarea id="razon_visita" name="razon_visita" rows="3" class="mt-1 block w-full p-2 border border-gray-300 rounded-md"></textarea>
+                                </div>
+                                <div>
+                                    <label for="fecha_cita" class="block text-sm font-medium text-gray-700">Fecha de la Cita:</label>
+                                    <input type="date" id="fecha_cita" name="fecha_cita" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label for="hora_cita" class="block text-sm font-medium text-gray-700">Hora de la Cita:</label>
+                                    <input type="time" id="hora_cita" name="hora_cita" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label for="tratamiento" class="block text-sm font-medium text-gray-700">Tratamiento a Realizar:</label>
+                                    <input type="text" id="tratamiento" name="tratamiento" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                                </div>
+                                <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition duration-200">Agendar Cita</button>
+                            </form>
+                        </div>
+                        <div class="card p-6 mt-6">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Vista de Citas (Calendario - Mock)</h2>
+                            <p class="text-gray-600">Aquí se mostraría una vista de calendario con las citas programadas (funcionalidad a desarrollar).</p>
+                             <img src="https://placehold.co/400x200/e2e8f0/64748b?text=Calendario+de+Citas" alt="Calendario de Citas de ejemplo" class="w-full h-auto rounded-lg mt-4">
+                        </div>
+                    `;
+                    break;
+                case 'courses':
+                    mainTitle.innerText = 'Gestión de Cursos';
+                    contentContainer.innerHTML = `
+                        <div class="card p-6">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Listado de Cursos</h2>
+                            <ul class="space-y-3 text-gray-600">
+                                <li><strong>Curso de Ortodoncia Básica:</strong> Lunes y Miércoles 09:00 AM - 12:00 PM</li>
+                                <li><strong>Actualización en Endodoncia:</strong> Martes y Jueves 02:00 PM - 05:00 PM</li>
+                                <li><strong>Manejo de Prótesis Dentales:</strong> Viernes 06:00 PM - 08:00 PM</li>
+                            </ul>
+                            <button class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Añadir Nuevo Curso</button>
+                        </div>
+                    `;
+                    break;
+                case 'reports':
+                    mainTitle.innerText = 'Generación de Reportes';
+                    contentContainer.innerHTML = `
+                        <div class="card p-6">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Tipos de Reportes</h2>
+                            <ul class="space-y-3 text-gray-600">
+                                <li>Reporte de Historial de Pacientes (completo)</li>
+                                <li>Reportes Financieros (ingresos por servicios, pagos)</li>
+                                <li>Reportes de Citas (por odontólogo, por tipo de tratamiento)</li>
+                                <li>Reportes de Cursos</li>
+                            </ul>
+                            <button class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Generar Reporte</button>
+                        </div>
+                    `;
+                    break;
+                case 'users':
+                    mainTitle.innerText = 'Gestión de Usuarios y Roles';
+                    contentContainer.innerHTML = `
+                        <div class="card p-6">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Usuarios del Sistema</h2>
+                            <ul class="space-y-3 text-gray-600">
+                                <li>Dr. Merito Cepillo (Administrador)</li>
+                                <li>Secretaria (Gestión de Citas y Pagos)</li>
+                                <li>Contador (Gestión Financiera)</li>
+                                <li>Encargada de Cursos (Gestión de Cursos)</li>
+                                <li>Asistente Odontológico (Historial de Pacientes, Citas)</li>
+                            </ul>
+                            <button class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Añadir Nuevo Usuario</button>
+                        </div>
+                    `;
+                    break;
+                case 'settings':
+                    mainTitle.innerText = 'Configuración del Sistema';
+                    contentContainer.innerHTML = `
+                        <div class="card p-6">
+                            <h2 class="text-xl font-semibold mb-4 text-gray-700">Ajustes Generales</h2>
+                            <ul class="space-y-3 text-gray-600">
+                                <li>Configuración de Copias de Seguridad</li>
+                                <li>Personalización de Reportes</li>
+                                <li>Ayuda y Soporte</li>
+                            </ul>
+                            <button class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Guardar Cambios</button>
+                        </div>
+                    `;
+                    break;
+                default:
+                    contentContainer.innerHTML = `
+                        <div class="card p-6">
+                            <h2 class="text-xl font-semibold text-gray-700">Selecciona una opción del menú lateral para comenzar.</h2>
+                            <p class="text-gray-600 mt-2">Puedes navegar entre las diferentes secciones para gestionar pacientes, citas, cursos y más.</p>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+
+        // Función para mostrar los detalles de un paciente
+        function showPatientDetails(patientId) {
+            const patient = patientsData.find(p => p.id === patientId);
+            const patientDetailsCard = document.getElementById('patient-details-card');
+
+            if (patient) {
+                patientDetailsCard.style.display = 'block';
+                patientDetailsCard.innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Detalles del Paciente: ${patient.name}</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600 mb-6">
+                        <div><strong>Cédula:</strong> ${patient.cedula}</div>
+                        <div><strong>Teléfono:</strong> ${patient.phone}</div>
+                        <div class="col-span-2"><strong>Alergias:</strong> ${patient.allergies}</div>
+                    </div>
+
+                    <h3 class="text-lg font-semibold mb-3 text-gray-700">Historial Dental</h3>
+                    <div class="bg-gray-100 p-4 rounded-md h-48 overflow-y-auto mb-4 border border-gray-200">
+                        <p class="text-gray-700 whitespace-pre-wrap">${patient.history}</p>
+                    </div>
+
+                    <button class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200 flex items-center justify-center space-x-2" onclick="summarizePatientHistory('${patient.id}')">
+                        <span id="summarize-button-text">✨ Resumir Historial con IA</span>
+                        <div id="summarize-spinner" class="spinner hidden"></div>
+                    </button>
+
+                    <div id="summary-area" class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md hidden">
+                        <h3 class="text-lg font-semibold mb-2 text-yellow-800">Resumen del Historial (Generado por IA)</h3>
+                        <p id="generated-summary" class="text-yellow-700"></p>
+                    </div>
+                `;
+            } else {
+                patientDetailsCard.style.display = 'none';
+            }
+        }
+
+        // Función para resumir el historial del paciente usando la API de Gemini
+        async function summarizePatientHistory(patientId) {
+            const patient = patientsData.find(p => p.id === patientId);
+            const summarizeButtonText = document.getElementById('summarize-button-text');
+            const summarizeSpinner = document.getElementById('summarize-spinner');
+            const summaryArea = document.getElementById('summary-area');
+            const generatedSummary = document.getElementById('generated-summary');
+
+            if (!patient) {
+                generatedSummary.innerText = 'Error: Paciente no encontrado.';
+                summaryArea.classList.remove('hidden');
+                return;
+            }
+
+            summarizeButtonText.innerText = 'Generando resumen...';
+            summarizeSpinner.classList.remove('hidden');
+            summaryArea.classList.add('hidden'); // Ocultar resumen anterior
+            generatedSummary.innerText = ''; // Limpiar texto anterior
+
+            const prompt = `Resume el siguiente historial dental del paciente "${patient.name}" en un párrafo conciso, resaltando los tratamientos más importantes y cualquier alergia o condición médica relevante:\n\n${patient.history}`;
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Dejar vacío; Canvas lo proporcionará en tiempo de ejecución
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    generatedSummary.innerText = text;
+                } else {
+                    generatedSummary.innerText = 'No se pudo generar el resumen. Inténtalo de nuevo.';
+                    console.error('Unexpected API response structure:', result);
+                }
+            } catch (error) {
+                generatedSummary.innerText = 'Ocurrió un error al conectar con la IA. Por favor, inténtalo más tarde.';
+                console.error('Error calling Gemini API:', error);
+            } finally {
+                summarizeButtonText.innerText = '✨ Resumir Historial con IA';
+                summarizeSpinner.classList.add('hidden');
+                summaryArea.classList.remove('hidden'); // Mostrar el área del resumen
+            }
+        }
+
+        // Cargar el dashboard por defecto al iniciar
+        window.onload = () => loadContent('dashboard');
+    </script>
+</body>
+</html>
